@@ -1,0 +1,15 @@
+voce tem que integrar ja o backend par agerar apk como ja disse em tempo real com suporte a controlar no painel web, ou seja conexao reversa direto do apk instaldo no dispositivo anroid do funcionario e eu que vou gerenciar o smartphone android aparece para mim ao vio em tempor eal que ele instalou ai posso inciiar a sessão no smartphone dele e poder controlar remotamente do painel ai voce desenha um celualr como se fosse um emulador para poder controlar arrastando o mouse na tela do painel, compreendeu?
+ai tem que ter socket, tcip ne, conexao reversa e suporte apra colcoar qualquer ip e porta automaticmanete , deixa padrao aqui do replit e tambem póder colocar qualquer ip e porta de vps publico e outra coisa poder buildar no painel web, tcpip, conexao reversa do apk instalsdo no android direot par aos ervidor do painel web e controlar, tudo isso
+nada fake e mockado aj quero desenvolvimento real, com api certo e dados certos, nao quero nada fake e mentiroso tem que ser real, com backend com logica real, com api real para o frontedn, que funcione mesmo para android qualquer versão, com tudo funcional e com apis se comunciando para funcionar o sistema
+colcoa no seu plano ai
+criar backend completo funcional como ja mencionei
+painel web completo se comunicando o painel com gerador de apk incluido todo a funcionaldiade do backend dentro dele
+android manifest xml se precisar no projeto
+coloca dados reais ao vivo em tempo real
+controle remoto do android que o funcinario baixar direot para controlar no painel web
+funcionar todas as versões aparelho android
+frontend se comunciando direot com o backend
+websocket, tcpip, conexão reversa tudo com0pleto
+e tudo mais que to falando
+
+eu pedi isso acima para o outro replit agent, quero que voce continue com esse proprosito e outra coisa nao quero que voce crie nenhum aqwuivo novo e nem ficar excluindo codigo fonte que nem louco ofoco e remove rtodos os erros na hora de executar o projeto e deixar funcional e 100% rbousto
