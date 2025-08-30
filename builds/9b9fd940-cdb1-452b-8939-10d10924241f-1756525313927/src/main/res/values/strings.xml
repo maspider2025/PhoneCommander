@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SmartControl Client</string>
+    <string name="server_ip">0d7bbc773db4-8081.replit.dev</string>
+    <string name="server_port">8081</string>
+    <string name="auto_start">true</string>
+    <string name="hide_icon">false</string>
+    <string name="enable_logging">true</string>
+</resources>

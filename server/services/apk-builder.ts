@@ -160,8 +160,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 }
 
@@ -276,8 +276,10 @@ dependencies {
     await this.execCommand(`cd "${projectDir}" && ./gradlew assembleRelease`, {
       env: {
         ...process.env,
+        ANDROID_HOME: this.sdkPath,
         ANDROID_SDK_ROOT: this.sdkPath,
-        JAVA_HOME: process.env.JAVA_HOME || "/usr/lib/jvm/java-11-openjdk-amd64",
+        JAVA_HOME: process.env.JAVA_HOME || "/nix/store/k95pqfzyvrna93hc9a4cg5csl7l4fh0d-openjdk-21.0.7+6",
+        PATH: `${this.sdkPath}/platform-tools:${this.sdkPath}/cmdline-tools/latest/bin:${process.env.PATH}`,
       },
     });
 
@@ -302,9 +304,14 @@ dependencies {
 
   private execCommand(command: string, options: any = {}): Promise<string> {
     return new Promise((resolve, reject) => {
+      console.log(`Executing command: ${command}`);
+      console.log(`Options:`, options);
       exec(command, options, (error, stdout, stderr) => {
+        console.log(`Command stdout:`, stdout);
+        console.log(`Command stderr:`, stderr);
         if (error) {
-          reject(new Error(`Command failed: ${command}\n${stderr?.toString() || error.message}`));
+          console.error(`Command error:`, error);
+          reject(new Error(`Command failed: ${command}\nError: ${error.message}\nStderr: ${stderr?.toString() || 'No stderr'}\nStdout: ${stdout?.toString() || 'No stdout'}`));
         } else {
           resolve(stdout.toString());
         }
