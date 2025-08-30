@@ -15,15 +15,15 @@ export function DeviceScreen({ device }: DeviceScreenProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { lastMessage } = useWebSocket();
   const [isInteracting, setIsInteracting] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [screenData, setScreenData] = useState<{ width: number; height: number } | null>(null);
+  const [lastTouchTime, setLastTouchTime] = useState(0);
+  const [touchStartPos, setTouchStartPos] = useState<{ x: number; y: number } | null>(null);
 
-  // Extracted deviceId, deviceWidth, deviceHeight, and isMouseDown from the context or component props
-  // For this example, let's assume they are available within the component scope.
-  // If they are managed by a global state or context, you would access them here.
-  const deviceId = device.id; // Assuming device.id is directly accessible
-  const deviceWidth = device.screenWidth; // Assuming device.screenWidth is available
-  const deviceHeight = device.screenHeight; // Assuming device.screenHeight is available
-  const [isMouseDown, setIsMouseDown] = useState(false); // Assuming this state is needed for mouse interaction
+  const deviceId = device.id;
+  const deviceWidth = device.screenWidth || 1080;
+  const deviceHeight = device.screenHeight || 1920;
+  const [isMouseDown, setIsMouseDown] = useState(false);
 
 
   useEffect(() => {
