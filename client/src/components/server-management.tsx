@@ -178,3 +178,180 @@ export function ServerManagement() {
     </Card>
   );
 }
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
+import api from "@/lib/api";
+import { Server, Settings, RefreshCw, Wifi, Database } from "lucide-react";
+
+interface ServerManagementProps {
+  config: any;
+  onConfigUpdate: (config: any) => void;
+}
+
+export function ServerManagement({ config, onConfigUpdate }: ServerManagementProps) {
+  const [serverConfig, setServerConfig] = useState({
+    tcpPort: 8080,
+    wsPort: 5000,
+    maxConnections: 50,
+    enableLogging: true,
+  });
+  const [isUpdating, setIsUpdating] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (config) {
+      setServerConfig({
+        tcpPort: config.tcpPort || 8080,
+        wsPort: config.wsPort || 5000,
+        maxConnections: config.maxConnections || 50,
+        enableLogging: config.enableLogging || true,
+      });
+    }
+  }, [config]);
+
+  const handleUpdateConfig = async () => {
+    setIsUpdating(true);
+    try {
+      const updatedConfig = await api.updateServerConfig(serverConfig);
+      onConfigUpdate(updatedConfig);
+      toast({
+        title: "Server Updated",
+        description: "Server configuration updated successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Update Failed",
+        description: "Failed to update server configuration",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const restartServer = async () => {
+    try {
+      await api.restartServer();
+      toast({
+        title: "Server Restarted",
+        description: "Server has been restarted successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Restart Failed",
+        description: "Failed to restart server",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Server className="h-5 w-5" />
+            Server Configuration
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="tcpPort">TCP Port</Label>
+              <Input
+                id="tcpPort"
+                type="number"
+                value={serverConfig.tcpPort}
+                onChange={(e) => setServerConfig(prev => ({ 
+                  ...prev, 
+                  tcpPort: parseInt(e.target.value) || 8080 
+                }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="wsPort">WebSocket Port</Label>
+              <Input
+                id="wsPort"
+                type="number"
+                value={serverConfig.wsPort}
+                onChange={(e) => setServerConfig(prev => ({ 
+                  ...prev, 
+                  wsPort: parseInt(e.target.value) || 5000 
+                }))}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="maxConnections">Max Connections</Label>
+            <Input
+              id="maxConnections"
+              type="number"
+              value={serverConfig.maxConnections}
+              onChange={(e) => setServerConfig(prev => ({ 
+                ...prev, 
+                maxConnections: parseInt(e.target.value) || 50 
+              }))}
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <Button 
+              onClick={handleUpdateConfig}
+              disabled={isUpdating}
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              {isUpdating ? "Updating..." : "Update Config"}
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={restartServer}
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Restart Server
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Database className="h-5 w-5" />
+            Server Status
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex justify-between items-center">
+            <span>TCP Server</span>
+            <Badge variant="default">
+              <Wifi className="h-3 w-3 mr-1" />
+              Running on :{serverConfig.tcpPort}
+            </Badge>
+          </div>
+          <Separator />
+          <div className="flex justify-between items-center">
+            <span>WebSocket Server</span>
+            <Badge variant="default">
+              <Wifi className="h-3 w-3 mr-1" />
+              Running on :{serverConfig.wsPort}
+            </Badge>
+          </div>
+          <Separator />
+          <div className="flex justify-between items-center">
+            <span>Current Domain</span>
+            <Badge variant="secondary">
+              {window.location.hostname}
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

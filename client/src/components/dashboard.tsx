@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { DeviceScreen } from "@/components/device-screen";
-import { ApkGenerator } from "@/components/apk-generator";
+import { APKGenerator } from "@/components/apk-generator";
 import { ConnectedDevicesList } from "@/components/connected-devices-list";
 import { DeviceControlPanel } from "@/components/device-control-panel";
 import { ServerManagement } from "@/components/server-management";
@@ -174,7 +174,7 @@ export default function Dashboard() {
         </TabsContent>
 
         <TabsContent value="generator">
-          <ApkGenerator />
+          <APKGenerator />
         </TabsContent>
 
         <TabsContent value="server">

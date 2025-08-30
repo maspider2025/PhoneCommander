@@ -339,3 +339,6 @@ export class DeviceManager extends EventEmitter {
 // of another class or managed globally if needed.
 // If you need a global instance, you would create it here:
 // export const deviceManager = new DeviceManager(tcpServerInstance); // Assuming tcpServerInstance is available
+
+export const deviceManager = new DeviceManager();
+export { DeviceManager };

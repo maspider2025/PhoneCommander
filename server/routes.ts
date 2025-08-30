@@ -279,12 +279,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const [hostname] = host.split(':');
 
     res.json({
-      hostname: hostname,
       tcpPort: 8080,
-      webPort: 5000,
-      fullUrl: `${req.protocol}://${host}`,
-      isReplit: hostname.includes('replit.dev')
+      wsPort: 5000,
+      hostname: hostname,
+      replitDomain: hostname.includes('replit') ? hostname : null,
+      maxConnections: 50,
+      enableLogging: true
     });
+  });
+
+  // Update server configuration
+  app.put("/api/server-config", (req, res) => {
+    try {
+      const { tcpPort, wsPort, maxConnections, enableLogging } = req.body;
+
+      // Here you would typically update the server configuration
+      // For now, we'll just return the updated config
+      const updatedConfig = {
+        tcpPort: tcpPort || 8080,
+        wsPort: wsPort || 5000,
+        maxConnections: maxConnections || 50,
+        enableLogging: enableLogging !== undefined ? enableLogging : true,
+        hostname: req.get('host')?.split(':')[0] || 'localhost'
+      };
+
+      res.json(updatedConfig);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update server configuration" });
+    }
+  });
+
+  // Restart server
+  app.post("/api/server/restart", (req, res) => {
+    try {
+      // In a real implementation, you might restart the server process
+      // For now, we'll just return a success message
+      res.json({ message: "Server restart initiated" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to restart server" });
+    }
   });
 
   // Get activity logs

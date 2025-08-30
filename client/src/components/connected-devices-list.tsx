@@ -91,3 +91,118 @@ export function ConnectedDevicesList() {
     </Card>
   );
 }
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import type { Device } from "@shared/schema";
+import { Smartphone, Wifi, WifiOff, Monitor, Battery, Signal } from "lucide-react";
+
+interface ConnectedDevicesListProps {
+  devices: Device[];
+  selectedDevice: Device | null;
+  onDeviceSelect: (device: Device) => void;
+  showDetails?: boolean;
+}
+
+export function ConnectedDevicesList({ 
+  devices, 
+  selectedDevice, 
+  onDeviceSelect, 
+  showDetails = false 
+}: ConnectedDevicesListProps) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Smartphone className="h-5 w-5" />
+          Connected Devices ({devices.filter(d => d.isConnected).length})
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {devices.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <Smartphone className="h-12 w-12 mx-auto mb-3 opacity-50" />
+            <p>No devices found</p>
+            <p className="text-sm">Generate and install an APK to connect devices</p>
+          </div>
+        ) : (
+          devices.map((device) => (
+            <div
+              key={device.id}
+              className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                selectedDevice?.id === device.id
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:border-primary/50"
+              }`}
+              onClick={() => onDeviceSelect(device)}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Smartphone className="h-4 w-4" />
+                  <span className="font-medium">{device.name}</span>
+                </div>
+                <Badge variant={device.isConnected ? "default" : "secondary"}>
+                  {device.isConnected ? (
+                    <><Wifi className="h-3 w-3 mr-1" />Online</>
+                  ) : (
+                    <><WifiOff className="h-3 w-3 mr-1" />Offline</>
+                  )}
+                </Badge>
+              </div>
+
+              {showDetails && (
+                <>
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <p>IP: {device.ipAddress}</p>
+                    <p>Model: {device.model}</p>
+                    <p>Android: {device.androidVersion}</p>
+                    {device.lastSeen && (
+                      <p>Last seen: {new Date(device.lastSeen).toLocaleString()}</p>
+                    )}
+                  </div>
+
+                  {device.isConnected && (
+                    <>
+                      <Separator className="my-3" />
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div className="flex items-center gap-1">
+                          <Battery className="h-3 w-3" />
+                          <span>{device.batteryLevel || 0}%</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Signal className="h-3 w-3" />
+                          <span>{device.screenWidth}×{device.screenHeight}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Monitor className="h-3 w-3" />
+                          <span>{device.isScreenOn ? "On" : "Off"}</span>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+
+              {device.isConnected && !showDetails && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full mt-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeviceSelect(device);
+                  }}
+                >
+                  <Monitor className="h-3 w-3 mr-1" />
+                  Control Device
+                </Button>
+              )}
+            </div>
+          ))
+        )}
+      </CardContent>
+    </Card>
+  );
+}

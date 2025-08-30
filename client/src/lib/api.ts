@@ -93,12 +93,30 @@ class ApiClient {
   }
 
   async getServerConfig() {
-    return this.get('/api/server-config');
-  }
+    const response = await fetch("/api/server-config");
+    return response.json();
+  },
 
   async updateServerConfig(config: any) {
-    return this.post('/api/server-config', config);
-  }
+    const response = await fetch("/api/server-config", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(config),
+    });
+    return response.json();
+  },
+
+  async restartServer() {
+    const response = await fetch("/api/server/restart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.json();
+  },
 }
 
 export default new ApiClient();
