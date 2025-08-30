@@ -1,72 +1,20 @@
+
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SmartControl Client</string>
+    <string name="server_ip">YOUR_REPLIT_URL.replit.dev</string>
+    <string name="server_port">8081</string>
+    <string name="auto_start">true</string>
+    <string name="hide_icon">false</string>
+    <string name="enable_logging">true</string>
     
-    <!-- Main Activity -->
-    <string name="status_ready">Ready to start</string>
-    <string name="status_connecting">Connecting to server…</string>
-    <string name="status_connected">Connected to server</string>
-    <string name="status_disconnected">Disconnected from server</string>
-    <string name="status_error">Connection error</string>
-    <string name="status_services_running">Services running</string>
+    <!-- Accessibility service -->
+    <string name="accessibility_service_label">SmartControl Remote Access</string>
+    <string name="accessibility_service_description">Allows remote control of this device through SmartControl dashboard</string>
     
-    <string name="button_start_services">Start Services</string>
-    <string name="button_stop_services">Stop Services</string>
-    
-    <!-- Permissions and setup -->
-    <string name="permission_overlay_required">Overlay permission required</string>
-    <string name="permission_accessibility_required">Please enable SmartControl accessibility service</string>
-    <string name="permission_storage_required">Storage permission required for proper functioning</string>
-    <string name="permission_screen_capture_denied">Screen capture permission denied</string>
-    <string name="permission_storage_granted">Storage permission granted</string>
-    
-    <!-- Instructions -->
-    <string name="instructions_title">Instructions:</string>
-    <string name="instructions_text">1. Grant all required permissions when prompted\n2. Enable accessibility service in Settings\n3. Tap \'Start Services\' to begin remote control\n4. The app will connect to the server automatically</string>
-    
-    <!-- Notifications -->
-    <string name="notification_title">SmartControl Active</string>
-    <string name="notification_text">Screen sharing is active</string>
-    <string name="notification_channel_name">Screen Capture Service</string>
-    <string name="notification_channel_description">SmartControl screen capture service</string>
-    
-    <!-- Service messages -->
-    <string name="service_screen_capture_started">Screen capture started</string>
-    <string name="service_screen_capture_stopped">Screen capture stopped</string>
-    <string name="service_accessibility_connected">Accessibility service connected</string>
-    <string name="service_accessibility_interrupted">Accessibility service interrupted</string>
-    
-    <!-- TCP Client -->
-    <string name="tcp_connecting">Connecting to server</string>
-    <string name="tcp_connected">Connected successfully</string>
-    <string name="tcp_disconnected">Disconnected from server</string>
-    <string name="tcp_connection_failed">Connection failed</string>
-    <string name="tcp_authentication_failed">Authentication failed</string>
-    
-    <!-- Commands -->
-    <string name="command_touch_completed">Touch gesture completed</string>
-    <string name="command_touch_cancelled">Touch gesture cancelled</string>
-    <string name="command_touch_failed">Failed to dispatch touch gesture</string>
-    <string name="command_swipe_completed">Swipe gesture completed</string>
-    <string name="command_text_input">Text input: %s</string>
-    <string name="command_no_editable_field">No editable text field found</string>
-    <string name="command_global_action">Global action %d result: %b</string>
-    <string name="command_requires_android_n">Touch gestures require Android N or higher</string>
-    
-    <!-- Errors -->
-    <string name="error_media_projection_failed">Failed to get MediaProjection</string>
-    <string name="error_parsing_message">Error parsing TCP message</string>
-    <string name="error_sending_message">Error sending message</string>
-    <string name="error_processing_image">Error processing image</string>
-    <string name="error_sending_screen_data">Error sending screen data</string>
-    <string name="error_handling_command">Error handling command</string>
-    
-    <!-- Device info -->
-    <string name="device_unknown">Unknown Device</string>
-    <string name="android_version_unknown">Unknown</string>
-    
-    <!-- Version info -->
-    <string name="version_info">SmartControl Pro v1.0.0</string>
-    
+    <!-- Permissions -->
+    <string name="permission_overlay_title">Overlay Permission Required</string>
+    <string name="permission_overlay_message">This app needs overlay permission to function properly</string>
+    <string name="permission_accessibility_title">Accessibility Permission Required</string>
+    <string name="permission_accessibility_message">This app needs accessibility permission to control the device</string>
 </resources>
-

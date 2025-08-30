@@ -124,24 +124,24 @@ export class APKBuilder {
   private async configureProject(projectDir: string, config: ApkConfiguration): Promise<void> {
     // Update gradle.properties
     const gradlePropsPath = join(projectDir, "gradle.properties");
-    const gradleProps = `
-android.useAndroidX=true
+    const gradleProps = `android.useAndroidX=true
 android.enableJetifier=true
 org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
 org.gradle.parallel=true
 org.gradle.caching=true
-`;
+org.gradle.configureondemand=false
+android.enableR8.fullMode=false`;
     await fs.writeFile(gradlePropsPath, gradleProps);
 
-    // Update build.gradle
-    const buildGradlePath = join(projectDir, "build.gradle");
-    const buildGradle = `
-plugins {
+    // Update app/build.gradle
+    const appBuildGradlePath = join(projectDir, "app/build.gradle");
+    const appBuildGradle = `plugins {
     id 'com.android.application'
 }
 
 android {
-    compileSdkVersion 34
+    namespace '${config.packageName}'
+    compileSdk 34
     buildToolsVersion "34.0.0"
 
     defaultConfig {
@@ -150,12 +150,18 @@ android {
         targetSdkVersion 34
         versionCode 1
         versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+        debug {
+            minifyEnabled false
+            debuggable true
         }
     }
 
@@ -163,15 +169,50 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+    }
 }
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.core:core:1.12.0'
     implementation 'com.google.android.material:material:1.10.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.preference:preference:1.2.1'
+    implementation 'androidx.work:work-runtime:2.8.1'
+}`;
+    await fs.writeFile(appBuildGradlePath, appBuildGradle);
+
+    // Update root build.gradle
+    const rootBuildGradlePath = join(projectDir, "build.gradle");
+    const rootBuildGradle = `buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.4'
+    }
 }
-`;
-    await fs.writeFile(buildGradlePath, buildGradle);
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}`;
+    await fs.writeFile(rootBuildGradlePath, rootBuildGradle);
 
     // Update AndroidManifest.xml
     const manifestPath = join(projectDir, "src/main/AndroidManifest.xml");
@@ -273,7 +314,7 @@ dependencies {
     const gradlewPath = join(projectDir, "gradlew");
     await this.execCommand(`chmod +x "${gradlewPath}"`);
     
-    await this.execCommand(`cd "${projectDir}" && ./gradlew assembleRelease`, {
+    await this.execCommand(`cd "${projectDir}" && chmod +x gradlew && ./gradlew clean assembleRelease --stacktrace --info`, {
       env: {
         ...process.env,
         ANDROID_HOME: this.sdkPath,
