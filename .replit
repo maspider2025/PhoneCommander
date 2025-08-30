@@ -1,9 +1,10 @@
-modules = ["nodejs-20", "java-graalvm22.3", "web"]
+modules = ["nodejs-20", "java-graalvm22.3", "web", "postgresql-16"]
 run = "npm run dev"
 hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-25_05"
+packages = ["jdk", "android-tools", "gradle", "wget", "unzip", "curl"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -56,3 +57,4 @@ task = "shell.exec"
 args = "npm run dev"
 
 [agent]
+integrations = ["javascript_websocket==1.0.0", "javascript_database==1.0.0"]

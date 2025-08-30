@@ -57,7 +57,7 @@ export default function Dashboard() {
   const loadDevices = async () => {
     try {
       const response = await api.getDevices();
-      setDevices(response.devices || []);
+      setDevices(response || []);
     } catch (error) {
       console.error("Failed to load devices:", error);
     }
@@ -258,7 +258,7 @@ export default function Dashboard() {
                       <Zap className="w-5 h-5 text-purple-600" />
                       Controles Avançados
                     </h3>
-                    <DeviceControlPanel device={selectedDevice} />
+                    <DeviceControlPanel />
                   </div>
                 )}
               </div>

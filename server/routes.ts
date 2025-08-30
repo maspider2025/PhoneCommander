@@ -50,10 +50,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all devices
   app.get("/api/devices", async (req, res) => {
     try {
+      console.log("Fetching devices from storage...");
       const devices = await storage.getDevices();
+      console.log("Devices fetched successfully:", devices.length);
       res.json(devices);
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch devices" });
+      console.error("Error fetching devices:", error);
+      res.status(500).json({ error: "Failed to fetch devices", details: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
 

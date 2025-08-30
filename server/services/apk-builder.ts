@@ -15,7 +15,7 @@ export interface BuildProgress {
 export class APKBuilder {
   private buildDir = resolve("builds");
   private templateDir = resolve("android-template");
-  private sdkPath = process.env.ANDROID_SDK_ROOT || "/opt/android-sdk";
+  private sdkPath = process.env.ANDROID_SDK_ROOT || `${process.cwd()}/android-sdk`;
 
   constructor() {
     this.ensureBuildDir();

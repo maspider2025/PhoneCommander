@@ -66,8 +66,8 @@ class ApiClient {
     });
   }
 
-  async generateApk(config: any) {
-    const response = await fetch(`${this.baseUrl}/api/generate-apk`, {
+  async createApkConfig(config: any) {
+    const response = await fetch(`${this.baseUrl}/api/apk-configs`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -80,8 +80,25 @@ class ApiClient {
     return response.json();
   }
 
-  async downloadApk(filename: string) {
-    const response = await fetch(`${this.baseUrl}/api/download/${filename}`);
+  async buildApk(configId: string) {
+    const response = await fetch(`${this.baseUrl}/api/build-apk/${configId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  }
+
+  async getApkConfigs() {
+    return this.get('/api/apk-configs');
+  }
+
+  async downloadApk(configId: string) {
+    const response = await fetch(`${this.baseUrl}/api/download-apk/${configId}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
