@@ -35,7 +35,8 @@ export class TCPServer extends EventEmitter {
       });
 
       this.server.listen(this.port, "0.0.0.0", () => {
-        console.log(`TCP Server listening on port ${this.port}`);
+        console.log(`TCP Server listening on 0.0.0.0:${this.port}`);
+        console.log(`TCP Server accessible at tcp://0.0.0.0:${this.port}`);
         this.startHeartbeatCheck();
         resolve();
       });
@@ -63,7 +64,8 @@ export class TCPServer extends EventEmitter {
   }
 
   private handleConnection(socket: Socket): void {
-    console.log(`New TCP connection from ${socket.remoteAddress}:${socket.remotePort}`);
+    const clientInfo = `${socket.remoteAddress}:${socket.remotePort}`;
+    console.log(`[TCP] New connection from ${clientInfo}`);
 
     let deviceConnection: DeviceConnection | null = null;
     let buffer = '';

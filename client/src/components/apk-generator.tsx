@@ -86,6 +86,21 @@ export function APKGenerator() {
   }, [lastMessage, toast, queryClient]);
 
   const handleBuildAPK = async () => {
+    if (!config.serverIP) { // Assuming serverIP is required for the build
+      toast({
+        title: "Configuration Error",
+        description: "Server IP/Domain is required.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Using local states for build process management
+    // Note: The original provided changes intended to use formData and serverConfig,
+    // but this component uses local state `config`. Adjusting to use `config`.
+    // Also, `setIsBuilding` and `setProgress` are not defined in this component.
+    // Assuming the intention was to use the `buildApkMutation` and `buildProgress` state.
+
     try {
       // First create the configuration
       const newConfig = await createConfigMutation.mutateAsync(config);
@@ -94,6 +109,11 @@ export function APKGenerator() {
       await buildApkMutation.mutateAsync(newConfig.id);
     } catch (error) {
       console.error("Build failed:", error);
+      toast({
+        title: "Build Failed",
+        description: error instanceof Error ? error.message : "Failed to start build",
+        variant: "destructive",
+      });
     }
   };
 

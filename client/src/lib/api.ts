@@ -28,13 +28,25 @@ export interface BuildProgress {
   downloadUrl?: string;
 }
 
-const API_BASE = process.env.NODE_ENV === 'development' ? 'http://localhost:5000' : '';
+// Get API base URL dynamically
+const getApiBase = () => {
+  if (process.env.NODE_ENV === 'development') {
+    // For Replit development environment
+    const protocol = window.location.protocol;
+    const host = window.location.hostname;
+    const port = window.location.port || (protocol === 'https:' ? '443' : '80');
+    return `${protocol}//${host}:${port}`;
+  } else {
+    // For production
+    return '';
+  }
+};
 
 class ApiClient {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = API_BASE;
+    this.baseUrl = getApiBase();
   }
 
   async get(endpoint: string) {

@@ -312,9 +312,12 @@ task clean(type: Delete) {
   private async compileAPK(projectDir: string, config: ApkConfiguration): Promise<string> {
     // Build the APK using Gradle
     const gradlewPath = join(projectDir, "gradlew");
+    
+    // Make gradlew executable
     await this.execCommand(`chmod +x "${gradlewPath}"`);
     
-    await this.execCommand(`cd "${projectDir}" && chmod +x gradlew && ./gradlew clean assembleRelease --stacktrace --info`, {
+    // Clean previous builds first
+    await this.execCommand(`cd "${projectDir}" && ./gradlew clean --stacktrace`, {
       env: {
         ...process.env,
         ANDROID_HOME: this.sdkPath,
@@ -323,16 +326,48 @@ task clean(type: Delete) {
         PATH: `${this.sdkPath}/platform-tools:${this.sdkPath}/cmdline-tools/latest/bin:${process.env.PATH}`,
       },
     });
-
-    const apkPath = join(projectDir, "app/build/outputs/apk/release/app-release.apk");
     
-    // Verify APK exists
-    try {
-      await fs.access(apkPath);
-      return apkPath;
-    } catch (error) {
-      throw new Error(`APK not found at expected location: ${apkPath}`);
+    // Build the APK
+    await this.execCommand(`cd "${projectDir}" && ./gradlew assembleRelease --stacktrace --info --no-daemon`, {
+      env: {
+        ...process.env,
+        ANDROID_HOME: this.sdkPath,
+        ANDROID_SDK_ROOT: this.sdkPath,
+        JAVA_HOME: process.env.JAVA_HOME || "/nix/store/k95pqfzyvrna93hc9a4cg5csl7l4fh0d-openjdk-21.0.7+6",
+        PATH: `${this.sdkPath}/platform-tools:${this.sdkPath}/cmdline-tools/latest/bin:${process.env.PATH}`,
+        GRADLE_OPTS: "-Xmx2048m -XX:MaxPermSize=512m",
+      },
+      timeout: 300000, // 5 minutes timeout
+    });
+
+    // Check multiple possible APK locations
+    const possibleApkPaths = [
+      join(projectDir, "app/build/outputs/apk/release/app-release.apk"),
+      join(projectDir, "build/outputs/apk/release/app-release.apk"),
+      join(projectDir, "app/build/outputs/apk/release/app-release-unsigned.apk"),
+      join(projectDir, "build/outputs/apk/release/app-release-unsigned.apk"),
+    ];
+    
+    for (const apkPath of possibleApkPaths) {
+      try {
+        await fs.access(apkPath);
+        console.log(`APK found at: ${apkPath}`);
+        return apkPath;
+      } catch (error) {
+        // Continue to next path
+      }
     }
+    
+    // If no APK found, list the build directory contents for debugging
+    try {
+      const buildDir = join(projectDir, "app/build/outputs/apk");
+      const contents = await this.execCommand(`find "${buildDir}" -name "*.apk" 2>/dev/null || echo "No APK files found"`);
+      console.log("APK search results:", contents);
+    } catch (error) {
+      console.log("Could not list build directory contents");
+    }
+    
+    throw new Error(`APK not found in any expected location. Check build logs for errors.`);
   }
 
   private async cleanup(projectDir: string): Promise<void> {
@@ -347,7 +382,10 @@ task clean(type: Delete) {
     return new Promise((resolve, reject) => {
       console.log(`Executing command: ${command}`);
       console.log(`Options:`, options);
-      exec(command, options, (error, stdout, stderr) => {
+      
+      const timeout = options.timeout || 60000; // Default 1 minute timeout
+      
+      const childProcess = exec(command, options, (error, stdout, stderr) => {
         console.log(`Command stdout:`, stdout);
         console.log(`Command stderr:`, stderr);
         if (error) {
@@ -356,6 +394,16 @@ task clean(type: Delete) {
         } else {
           resolve(stdout.toString());
         }
+      });
+      
+      // Set timeout
+      const timer = setTimeout(() => {
+        childProcess.kill('SIGKILL');
+        reject(new Error(`Command timed out after ${timeout}ms: ${command}`));
+      }, timeout);
+      
+      childProcess.on('exit', () => {
+        clearTimeout(timer);
       });
     });
   }
