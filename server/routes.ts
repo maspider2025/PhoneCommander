@@ -15,8 +15,9 @@ const upload = multer({ dest: "uploads/" });
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
 
-  // Initialize TCP server
-  const tcpServer = new TCPServer(8080);
+  // Initialize TCP server on a different port from HTTP
+  const tcpPort = parseInt(process.env.TCP_PORT || '8081', 10);
+  const tcpServer = new TCPServer(tcpPort);
   await tcpServer.start();
 
   // Initialize device manager
@@ -279,7 +280,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const [hostname] = host.split(':');
 
     res.json({
-      tcpPort: 8080,
+      tcpPort: tcpPort,
       wsPort: 5000,
       hostname: hostname,
       replitDomain: hostname.includes('replit') ? hostname : null,

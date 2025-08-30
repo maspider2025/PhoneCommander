@@ -73,9 +73,10 @@ export class TCPServer extends EventEmitter {
         const dataStr = data.toString();
 
         // Check if this is an HTTP request (reject it)
-        if (dataStr.startsWith('GET ') || dataStr.startsWith('POST ') || dataStr.startsWith('HTTP/')) {
+        if (dataStr.startsWith('GET ') || dataStr.startsWith('POST ') || dataStr.startsWith('PUT ') || dataStr.startsWith('DELETE ') || dataStr.startsWith('HTTP/')) {
           console.log(`Rejecting HTTP request from ${socket.remoteAddress}`);
-          socket.end('HTTP/1.1 400 Bad Request\r\n\r\nThis is a TCP socket for Android devices only');
+          socket.write('HTTP/1.1 400 Bad Request\r\nContent-Type: text/plain\r\n\r\nThis is a TCP socket for Android devices only\r\n');
+          socket.end();
           return;
         }
 

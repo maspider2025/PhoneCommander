@@ -11,7 +11,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <Route path="/" component={Dashboard} />
-        <Route component={NotFound} />
+        <Route path="/dashboard" component={Dashboard} />
+        <Route path="*" component={NotFound} />
       </Router>
       <Toaster />
     </QueryClientProvider>

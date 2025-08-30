@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class TCPClient {
     private static final String TAG = "TCPClient";
     private static final String DEFAULT_SERVER_HOST = "YOUR_REPLIT_URL.replit.dev";
-    private static final int DEFAULT_SERVER_PORT = 8080;
+    private static final int DEFAULT_SERVER_PORT = 8081;
 
     private Socket socket;
     private BufferedWriter writer;

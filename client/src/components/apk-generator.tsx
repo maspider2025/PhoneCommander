@@ -19,7 +19,7 @@ export function APKGenerator() {
     appName: "SmartControl Client",
     packageName: "com.smartcontrol.client",
     serverIP: window.location.hostname, // Default to current Replit domain
-    serverPort: 8080, // Default port
+    serverPort: 8081, // Updated TCP port
     autoStart: true,
     hideIcon: false,
     enableLogging: true,
@@ -172,7 +172,7 @@ export function APKGenerator() {
                   className="border-blue-300"
                 />
                 <p className="text-xs text-blue-600">
-                  Use your Replit domain or VPS IP
+                  Suporte: VPS IP, ngrok tunnel, Replit domain, localhost
                 </p>
               </div>
               <div className="space-y-2">
@@ -195,14 +195,14 @@ export function APKGenerator() {
                 onClick={() => setConfig({
                   ...config,
                   serverIP: window.location.hostname,
-                  serverPort: 8080
+                  serverPort: 8081
                 })}
                 className="text-blue-700 border-blue-300"
               >
-                Use Current Replit URL
+                Use Current Domain
               </Button>
               <div className="text-xs text-blue-600">
-                Current: {window.location.hostname}:8080
+                Current: {window.location.hostname}:8081
               </div>
             </div>
           </div>
