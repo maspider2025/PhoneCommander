@@ -53,13 +53,18 @@ export class DeviceManager extends EventEmitter {
     const device: Device = {
       id: deviceId,
       name: deviceData.name || `Device ${deviceId}`,
-      isConnected: true,
-      deviceModel: deviceData.deviceModel || 'Unknown',
       androidVersion: deviceData.androidVersion || 'Unknown',
+      deviceModel: deviceData.deviceModel || 'Unknown', 
+      packageName: deviceData.packageName || 'unknown.package',
       batteryLevel: deviceData.batteryLevel || 0,
+      isConnected: true,
+      lastSeen: new Date(),
+      tcpAddress: deviceData.tcpAddress || null,
+      tcpPort: deviceData.tcpPort || null,
       screenWidth: deviceData.screenWidth || 1080,
       screenHeight: deviceData.screenHeight || 1920,
-      lastSeen: new Date()
+      metadata: deviceData.metadata || {},
+      createdAt: new Date()
     };
 
     this.devices.set(device.id, { ...device }); // Removed socket association here as it's handled by TCPServer
@@ -210,14 +215,16 @@ export class DeviceManager extends EventEmitter {
   performHealthCheck() {
     const now = new Date();
     this.devices.forEach((device, deviceId) => {
-      const timeSinceLastSeen = now.getTime() - device.lastSeen.getTime();
-      if (timeSinceLastSeen > 60000 && device.isConnected) { // 1 minute timeout
-        console.log(`Device ${deviceId} appears to be disconnected (no heartbeat)`);
-        device.isConnected = false;
-        this.broadcastToWebClients({
-          type: 'device_disconnected',
-          deviceId: deviceId
-        });
+      if (device.lastSeen) {
+        const timeSinceLastSeen = now.getTime() - device.lastSeen.getTime();
+        if (timeSinceLastSeen > 60000 && device.isConnected) { // 1 minute timeout
+          console.log(`Device ${deviceId} appears to be disconnected (no heartbeat)`);
+          device.isConnected = false;
+          this.broadcastToWebClients({
+            type: 'device_disconnected',
+            deviceId: deviceId
+          });
+        }
       }
     });
   }
@@ -340,5 +347,5 @@ export class DeviceManager extends EventEmitter {
 // If you need a global instance, you would create it here:
 // export const deviceManager = new DeviceManager(tcpServerInstance); // Assuming tcpServerInstance is available
 
-export const deviceManager = new DeviceManager();
-export { DeviceManager };
+// Create device manager instance - will need proper tcpServer instance
+// export const deviceManager = new DeviceManager(tcpServer);
