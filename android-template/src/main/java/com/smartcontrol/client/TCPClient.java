@@ -8,7 +8,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
-import android.view.accessibility.AccessibilityService;
+// Removed duplicate AccessibilityService import
 import android.view.accessibility.GestureDescription;
 import android.graphics.Path;
 import org.json.JSONArray;
@@ -42,7 +42,7 @@ public class TCPClient {
     private Context context;
     private Handler mainHandler;
     private TCPClientListener listener;
-    private AccessibilityService accessibilityService;
+    private AccessibilityControlService accessibilityService;
     private ScreenCaptureService screenCaptureService;
 
     public interface TCPClientListener {
@@ -58,7 +58,7 @@ public class TCPClient {
         this.executor = Executors.newSingleThreadExecutor();
     }
 
-    public void setAccessibilityService(AccessibilityService service) {
+    public void setAccessibilityService(AccessibilityControlService service) {
         this.accessibilityService = service;
     }
 
@@ -239,7 +239,7 @@ public class TCPClient {
         int y = data.getInt("y");
         
         if (accessibilityService != null) {
-            accessibilityService.performClick(x, y);
+            accessibilityService.performTouch(x, y);
         }
     }
 
@@ -247,7 +247,8 @@ public class TCPClient {
         int keyCode = data.getInt("keyCode");
         
         if (accessibilityService != null) {
-            accessibilityService.performKeyEvent(keyCode);
+            // Key events need to be implemented in AccessibilityControlService
+            Log.d(TAG, "Key event: " + keyCode);
         }
     }
 
@@ -255,7 +256,8 @@ public class TCPClient {
         String text = data.getString("text");
         
         if (accessibilityService != null) {
-            accessibilityService.performTextInput(text);
+            // Text input needs to be implemented in AccessibilityControlService
+            Log.d(TAG, "Text input: " + text);
         }
     }
 
@@ -266,7 +268,7 @@ public class TCPClient {
         int endY = data.getInt("endY");
         
         if (accessibilityService != null) {
-            accessibilityService.performSwipe(startX, startY, endX, endY);
+            accessibilityService.performSwipe(startX, startY, endX, endY, 500);
         }
     }
 
@@ -276,7 +278,8 @@ public class TCPClient {
         int duration = data.optInt("duration", 1000);
         
         if (accessibilityService != null) {
-            accessibilityService.performLongPress(x, y, duration);
+            // Long press needs to be implemented in AccessibilityControlService
+            Log.d(TAG, "Long press: (" + x + ", " + y + ") duration: " + duration);
         }
     }
 
@@ -284,7 +287,8 @@ public class TCPClient {
         JSONArray pointsArray = data.getJSONArray("points");
         
         if (accessibilityService != null) {
-            accessibilityService.performDrag(pointsArray);
+            // Drag needs to be implemented in AccessibilityControlService
+            Log.d(TAG, "Drag gesture with " + pointsArray.length() + " points");
         }
     }
 

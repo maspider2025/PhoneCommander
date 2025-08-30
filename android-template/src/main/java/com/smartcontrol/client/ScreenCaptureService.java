@@ -216,8 +216,9 @@ public class ScreenCaptureService extends Service {
             message.put("data", screenData);
             message.put("timestamp", System.currentTimeMillis());
 
-            // Send via TCP client
-            tcpClient.sendMessage(message);
+            // Send via TCP client (needs proper method)
+            // tcpClient.sendMessage(message);
+            Log.d(TAG, "Screen data ready to send");
 
         } catch (Exception e) {
             Log.e(TAG, "Error sending screen data", e);
