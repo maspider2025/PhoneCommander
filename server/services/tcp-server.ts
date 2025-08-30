@@ -276,7 +276,7 @@ export class TCPServer extends EventEmitter {
   }
 
   private startScreenCapture(deviceId: string): void {
-    // Request screen updates every 50ms for ultra-smooth real-time control
+    // Ultra-fast screen capture for real-time control (30 FPS)
     const interval = setInterval(() => {
       const connection = this.connections.get(deviceId);
       if (connection && connection.isAuthenticated) {
@@ -284,15 +284,17 @@ export class TCPServer extends EventEmitter {
           type: "request_screen",
           data: { 
             type: "request_screen", 
-            quality: "high", 
+            quality: "ultra_high", 
             format: "JPEG",
-            compression: 80,
-            scale: 1.0
+            compression: 90, // Higher quality for better control experience
+            scale: 1.0,
+            realtime: true,
+            fps: 30
           },
           timestamp: Date.now(),
         });
       }
-    }, 50); // Ultra-fast refresh for real-time control
+    }, 33); // 30 FPS = 1000ms/30 = 33ms interval
 
     this.screenUpdateInterval.set(deviceId, interval);
   }

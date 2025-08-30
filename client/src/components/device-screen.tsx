@@ -19,6 +19,10 @@ export function DeviceScreen({ device }: DeviceScreenProps) {
   const [screenData, setScreenData] = useState<{ width: number; height: number } | null>(null);
   const [lastTouchTime, setLastTouchTime] = useState(0);
   const [touchStartPos, setTouchStartPos] = useState<{ x: number; y: number } | null>(null);
+  const [swipeStartPos, setSwipeStartPos] = useState<{ x: number; y: number } | null>(null);
+  const [dragPath, setDragPath] = useState<{ x: number; y: number }[]>([]);
+  const [gestureType, setGestureType] = useState<'touch' | 'swipe' | 'drag' | 'longpress' | null>(null);
+  const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | null>(null);
 
   const deviceId = device.id;
   const deviceWidth = device.screenWidth || 1080;
@@ -120,6 +124,18 @@ export function DeviceScreen({ device }: DeviceScreenProps) {
     const deviceY = Math.round(y * ((deviceHeight || 1920) / rect.height));
 
     setIsMouseDown(true);
+    setSwipeStartPos({ x: deviceX, y: deviceY });
+    setDragPath([{ x: deviceX, y: deviceY }]);
+    setGestureType('touch');
+    
+    // Start long press timer
+    const timer = setTimeout(async () => {
+      if (gestureType === 'touch' && !swipeStartPos) return;
+      setGestureType('longpress');
+      await api.sendLongPress(deviceId, deviceX, deviceY, 800);
+    }, 800); // Long press after 800ms
+    setPressTimer(timer);
+    
     await api.sendTouch(deviceId, deviceX, deviceY, 'down');
   };
 
@@ -135,6 +151,19 @@ export function DeviceScreen({ device }: DeviceScreenProps) {
     // Convert to device coordinates
     const deviceX = Math.round(x * ((deviceWidth || 1080) / rect.width));
     const deviceY = Math.round(y * ((deviceHeight || 1920) / rect.height));
+
+    // Add to drag path for complex gestures
+    setDragPath(prev => [...prev, { x: deviceX, y: deviceY }]);
+    
+    // Determine gesture type based on movement distance
+    if (swipeStartPos && gestureType === 'touch') {
+      const distance = Math.sqrt(
+        Math.pow(deviceX - swipeStartPos.x, 2) + Math.pow(deviceY - swipeStartPos.y, 2)
+      );
+      if (distance > 50) {
+        setGestureType('swipe');
+      }
+    }
 
     await api.sendTouch(deviceId, deviceX, deviceY, 'move');
   };
@@ -153,7 +182,31 @@ export function DeviceScreen({ device }: DeviceScreenProps) {
     const deviceY = Math.round(y * ((deviceHeight || 1920) / rect.height));
 
     setIsMouseDown(false);
-    await api.sendTouch(deviceId, deviceX, deviceY, 'up');
+    
+    // Clear long press timer
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      setPressTimer(null);
+    }
+    
+    // Execute appropriate gesture based on movement (unless it was a long press)
+    if (gestureType !== 'longpress') {
+      if (gestureType === 'swipe' && swipeStartPos && dragPath.length > 1) {
+        const endPos = dragPath[dragPath.length - 1];
+        await api.sendSwipe(deviceId, swipeStartPos.x, swipeStartPos.y, endPos.x, endPos.y);
+      } else if (dragPath.length > 5) {
+        // Complex drag gesture with multiple points
+        await api.sendDrag(deviceId, dragPath);
+      } else {
+        // Simple tap
+        await api.sendTouch(deviceId, deviceX, deviceY, 'up');
+      }
+    }
+    
+    // Reset gesture tracking
+    setSwipeStartPos(null);
+    setDragPath([]);
+    setGestureType(null);
   };
 
 

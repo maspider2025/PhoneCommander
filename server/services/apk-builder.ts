@@ -254,8 +254,18 @@ dependencies {
     const mainActivityContent = await fs.readFile(mainActivityPath, "utf-8");
     const updatedMainActivity = mainActivityContent
       .replace(/DEFAULT_SERVER_HOST = ".*";/, `DEFAULT_SERVER_HOST = "${config.serverIP}";`)
-      .replace(/DEFAULT_SERVER_PORT = \d+;/, `DEFAULT_SERVER_PORT = ${config.serverPort};`);
+      .replace(/DEFAULT_SERVER_PORT = \d+;/, `DEFAULT_SERVER_PORT = ${config.serverPort};`)
+      .replace(/YOUR_REPLIT_URL\.replit\.dev/g, config.serverIP);
     await fs.writeFile(mainActivityPath, updatedMainActivity);
+
+    // Update TCPClient.java with server configuration  
+    const tcpClientPath = join(projectDir, "src/main/java/com/smartcontrol/client/TCPClient.java");
+    const tcpClientContent = await fs.readFile(tcpClientPath, "utf-8");
+    const updatedTcpClient = tcpClientContent
+      .replace(/DEFAULT_SERVER_HOST = ".*";/, `DEFAULT_SERVER_HOST = "${config.serverIP}";`)
+      .replace(/DEFAULT_SERVER_PORT = \d+;/, `DEFAULT_SERVER_PORT = ${config.serverPort};`)
+      .replace(/YOUR_REPLIT_URL\.replit\.dev/g, config.serverIP);
+    await fs.writeFile(tcpClientPath, updatedTcpClient);
   }
 
   private async compileAPK(projectDir: string, config: ApkConfiguration): Promise<string> {

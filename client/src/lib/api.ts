@@ -117,6 +117,56 @@ class ApiClient {
     });
     return response.json();
   }
+
+  // Enhanced control methods for ultra-fast remote Android control
+  async sendSwipe(deviceId: string, startX: number, startY: number, endX: number, endY: number) {
+    return this.post(`/api/control/${deviceId}`, {
+      type: "swipe",
+      data: { startX, startY, endX, endY }
+    });
+  }
+
+  async sendKey(deviceId: string, keyCode: number) {
+    return this.post(`/api/control/${deviceId}`, {
+      type: "key",
+      data: { keyCode }
+    });
+  }
+
+  async sendText(deviceId: string, text: string) {
+    return this.post(`/api/control/${deviceId}`, {
+      type: "text",
+      data: { text }
+    });
+  }
+
+  async sendQuickAction(deviceId: string, action: string) {
+    return this.post(`/api/control/${deviceId}`, {
+      type: "quick_action",
+      data: { action }
+    });
+  }
+
+  async takeScreenshot(deviceId: string) {
+    return this.post(`/api/control/${deviceId}`, {
+      type: "screenshot",
+      data: {}
+    });
+  }
+
+  async sendLongPress(deviceId: string, x: number, y: number, duration: number = 1000) {
+    return this.post(`/api/control/${deviceId}`, {
+      type: "long_press",
+      data: { x, y, duration }
+    });
+  }
+
+  async sendDrag(deviceId: string, points: { x: number; y: number }[]) {
+    return this.post(`/api/control/${deviceId}`, {
+      type: "drag",
+      data: { points }
+    });
+  }
 }
 
 export default new ApiClient();
