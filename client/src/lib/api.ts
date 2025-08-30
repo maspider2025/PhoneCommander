@@ -95,7 +95,7 @@ class ApiClient {
   async getServerConfig() {
     const response = await fetch("/api/server-config");
     return response.json();
-  },
+  }
 
   async updateServerConfig(config: any) {
     const response = await fetch("/api/server-config", {
@@ -106,7 +106,7 @@ class ApiClient {
       body: JSON.stringify(config),
     });
     return response.json();
-  },
+  }
 
   async restartServer() {
     const response = await fetch("/api/server/restart", {
@@ -116,7 +116,7 @@ class ApiClient {
       },
     });
     return response.json();
-  },
+  }
 }
 
 export default new ApiClient();

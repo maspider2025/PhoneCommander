@@ -41,6 +41,9 @@ export const apkConfigurations = pgTable("apk_configurations", {
   hideIcon: boolean("hide_icon").default(false),
   enableLogging: boolean("enable_logging").default(true),
   buildStatus: text("build_status").default("idle"), // idle, building, completed, failed
+  buildProgress: integer("build_progress").default(0),
+  buildError: text("build_error"),
+  buildDate: timestamp("build_date"),
   apkPath: text("apk_path"),
   fileSize: integer("file_size"),
   createdAt: timestamp("created_at").defaultNow(),

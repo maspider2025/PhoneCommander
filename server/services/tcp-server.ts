@@ -52,13 +52,13 @@ export class TCPServer extends EventEmitter {
       const now = Date.now();
       const timeout = 30000; // 30 seconds timeout
 
-      for (const [deviceId, connection] of this.connections.entries()) {
+      this.connections.forEach((connection, deviceId) => {
         if (now - connection.lastHeartbeat > timeout) {
           console.log(`Device ${deviceId} heartbeat timeout, disconnecting`);
           connection.socket.destroy();
           this.handleDisconnection(connection);
         }
-      }
+      });
     }, 10000); // Check every 10 seconds
   }
 
@@ -281,7 +281,7 @@ export class TCPServer extends EventEmitter {
       const connection = this.connections.get(deviceId);
       if (connection && connection.isAuthenticated) {
         this.sendMessage(connection.socket, {
-          type: "command_response",
+          type: "request_screen",
           data: { 
             type: "request_screen", 
             quality: "high", 
@@ -301,31 +301,14 @@ export class TCPServer extends EventEmitter {
     return Array.from(this.connections.keys());
   }
 
-  public sendCommandToDevice(deviceId: string, command: any): boolean {
-    const connection = this.connections.get(deviceId);
-    if (connection && connection.isAuthenticated) {
-      try {
-        this.sendMessage(connection.socket, {
-          type: "command",
-          data: command,
-          timestamp: Date.now(),
-        });
-        return true;
-      } catch (error) {
-        console.error(`Error sending command to device ${deviceId}:`, error);
-        return false;
-      }
-    }
-    return false;
-  }
 
   public stop(): void {
     if (this.heartbeatInterval) {
       clearInterval(this.heartbeatInterval);
     }
-    for (const interval of this.screenUpdateInterval.values()) {
+    this.screenUpdateInterval.forEach((interval) => {
       clearInterval(interval);
-    }
+    });
     this.screenUpdateInterval.clear();
 
     if (this.server) {

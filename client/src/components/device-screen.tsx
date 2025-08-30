@@ -116,8 +116,8 @@ export function DeviceScreen({ device }: DeviceScreenProps) {
     const y = e.clientY - rect.top;
 
     // Convert to device coordinates
-    const deviceX = Math.round(x * (deviceWidth / rect.width));
-    const deviceY = Math.round(y * (deviceHeight / rect.height));
+    const deviceX = Math.round(x * ((deviceWidth || 1080) / rect.width));
+    const deviceY = Math.round(y * ((deviceHeight || 1920) / rect.height));
 
     setIsMouseDown(true);
     await api.sendTouch(deviceId, deviceX, deviceY, 'down');
@@ -133,8 +133,8 @@ export function DeviceScreen({ device }: DeviceScreenProps) {
     const y = e.clientY - rect.top;
 
     // Convert to device coordinates
-    const deviceX = Math.round(x * (deviceWidth / rect.width));
-    const deviceY = Math.round(y * (deviceHeight / rect.height));
+    const deviceX = Math.round(x * ((deviceWidth || 1080) / rect.width));
+    const deviceY = Math.round(y * ((deviceHeight || 1920) / rect.height));
 
     await api.sendTouch(deviceId, deviceX, deviceY, 'move');
   };
@@ -149,8 +149,8 @@ export function DeviceScreen({ device }: DeviceScreenProps) {
     const y = e.clientY - rect.top;
 
     // Convert to device coordinates
-    const deviceX = Math.round(x * (deviceWidth / rect.width));
-    const deviceY = Math.round(y * (deviceHeight / rect.height));
+    const deviceX = Math.round(x * ((deviceWidth || 1080) / rect.width));
+    const deviceY = Math.round(y * ((deviceHeight || 1920) / rect.height));
 
     setIsMouseDown(false);
     await api.sendTouch(deviceId, deviceX, deviceY, 'up');

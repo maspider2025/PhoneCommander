@@ -187,14 +187,7 @@ export function DeviceControlPanel() {
           <div className="flex gap-6">
             {/* Device Screen */}
             <div className="flex-shrink-0">
-              <DeviceScreen 
-                device={selectedDevice} 
-                onTouch={handleTouchEvent}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onLongPress={handleLongPress}
-              />
+              <DeviceScreen device={selectedDevice} />
               
               {/* Device Info */}
               <div className="mt-4 space-y-2">

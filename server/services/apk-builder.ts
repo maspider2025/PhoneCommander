@@ -294,9 +294,9 @@ dependencies {
     return new Promise((resolve, reject) => {
       exec(command, options, (error, stdout, stderr) => {
         if (error) {
-          reject(new Error(`Command failed: ${command}\n${stderr || error.message}`));
+          reject(new Error(`Command failed: ${command}\n${stderr?.toString() || error.message}`));
         } else {
-          resolve(stdout);
+          resolve(stdout.toString());
         }
       });
     });
