@@ -35,46 +35,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       data: { status: 'connected', timestamp: Date.now() }
     }));
 
-    // Handle device manager events
-    const handleScreenUpdate = (deviceId: string, screenData: any) => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          type: 'screen_update',
-          deviceId,
-          data: screenData
-        }));
-      }
-    };
-
-    const handleDeviceStatusChanged = (deviceId: string, status: string) => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          type: 'device_status',
-          deviceId,
-          data: { status }
-        }));
-      }
-    };
-
-    const handleCommandResponse = (deviceId: string, response: any) => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          type: 'command_response',
-          deviceId,
-          data: response
-        }));
-      }
-    };
-
-    deviceManager.on('screen_update', handleScreenUpdate);
-    deviceManager.on('device_status_changed', handleDeviceStatusChanged);
-    deviceManager.on('command_response', handleCommandResponse);
+    // Add WebSocket client to device manager
+    deviceManager.addWebSocketClient(ws);
 
     ws.on('close', () => {
       console.log('WebSocket client disconnected');
-      deviceManager.off('screen_update', handleScreenUpdate);
-      deviceManager.off('device_status_changed', handleDeviceStatusChanged);
-      deviceManager.off('command_response', handleCommandResponse);
+      deviceManager.removeWebSocketClient(ws);
     });
   });
 

@@ -301,6 +301,24 @@ export class TCPServer extends EventEmitter {
     return Array.from(this.connections.keys());
   }
 
+  public sendCommandToDevice(deviceId: string, command: any): boolean {
+    const connection = this.connections.get(deviceId);
+    if (connection && connection.isAuthenticated) {
+      try {
+        this.sendMessage(connection.socket, {
+          type: "command",
+          data: command,
+          timestamp: Date.now(),
+        });
+        return true;
+      } catch (error) {
+        console.error(`Error sending command to device ${deviceId}:`, error);
+        return false;
+      }
+    }
+    return false;
+  }
+
   public stop(): void {
     if (this.heartbeatInterval) {
       clearInterval(this.heartbeatInterval);

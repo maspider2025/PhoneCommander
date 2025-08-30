@@ -16,11 +16,14 @@ export interface KeyEvent {
   action: "down" | "up";
 }
 
-class DeviceManager {
+export class DeviceManager extends EventEmitter {
   private devices: Map<string, Device & { socket?: net.Socket }> = new Map();
   private webSocketClients: Set<WebSocket> = new Set();
+  private tcpServer: TCPServer;
 
   constructor(tcpServer: TCPServer) {
+    super();
+    this.tcpServer = tcpServer;
     this.setupTCPListeners(tcpServer);
   }
 
@@ -133,7 +136,7 @@ class DeviceManager {
 
   sendCommand(deviceId: string, commandType: string, commandData: any): boolean {
     const device = this.devices.get(deviceId);
-    if (device && device.isConnected) { // Removed socket check here as TCPServer handles it
+    if (device && device.isConnected) {
       try {
         const command = {
           type: commandType,
@@ -141,17 +144,10 @@ class DeviceManager {
           timestamp: Date.now()
         };
 
-        // Assuming TCPServer has a method to send commands
-        // For now, we'll simulate sending and log it.
-        // You'll need to integrate this with your TCPServer instance.
-        console.log(`Simulating command send to ${deviceId}:`, commandType, commandData);
-
-        // Example: If TCPServer has a sendCommandToDevice method:
-        // const success = tcpServer.sendCommandToDevice(deviceId, command);
-        // return success;
-
-        // Placeholder return true for now
-        return true;
+        // Use TCPServer to send command to device
+        const success = this.tcpServer.sendCommandToDevice(deviceId, command);
+        console.log(`Command sent to ${deviceId}:`, commandType, commandData, success ? 'SUCCESS' : 'FAILED');
+        return success;
 
       } catch (error) {
         console.error('Error sending command to device:', error);
