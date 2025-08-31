@@ -1,4 +1,4 @@
-modules = ["nodejs-20", "java-graalvm22.3", "web"]
+modules = ["c-clang14", "java-graalvm22.3", "nodejs-20", "cpp-clang14"]
 run = "npm run dev"
 hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
@@ -8,7 +8,8 @@ packages = ["jdk21", "android-tools", "gradle"]
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["sh", "-c", "npm run dev"]
+run = ["npm", "run", "start"]
+build = ["npm", "run", "build"]
 
 [[ports]]
 localPort = 5000
