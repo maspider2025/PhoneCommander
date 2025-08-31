@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TestAPK</string>
+    <string name="server_ip">localhost</string>
+    <string name="server_port">8081</string>
+    <string name="auto_start">true</string>
+    <string name="hide_icon">false</string>
+    <string name="enable_logging">true</string>
+</resources>

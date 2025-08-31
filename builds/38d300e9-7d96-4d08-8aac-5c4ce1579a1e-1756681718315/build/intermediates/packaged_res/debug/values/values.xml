@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_description">Allows remote control of this device through SmartControl dashboard</string>
+    <string name="accessibility_service_label">SmartControl Remote Access</string>
+    <string name="app_name">SmartControl Client</string>
+    <string name="auto_start">true</string>
+    <string name="enable_logging">true</string>
+    <string name="hide_icon">false</string>
+    <string name="permission_accessibility_message">This app needs accessibility permission to control the device</string>
+    <string name="permission_accessibility_title">Accessibility Permission Required</string>
+    <string name="permission_overlay_message">This app needs overlay permission to function properly</string>
+    <string name="permission_overlay_title">Overlay Permission Required</string>
+    <string name="server_ip">YOUR_REPLIT_URL.replit.dev</string>
+    <string name="server_port">8081</string>
+    <style name="AppTheme" parent="Theme.Material3.Light">
+        <item name="colorPrimary">#2196F3</item>
+        <item name="colorPrimaryDark">#1976D2</item>
+        <item name="colorAccent">#03DAC5</item>
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+</resources>

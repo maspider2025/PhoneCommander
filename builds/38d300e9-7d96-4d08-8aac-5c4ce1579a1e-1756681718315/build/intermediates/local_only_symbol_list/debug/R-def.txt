@@ -1,0 +1,26 @@
+R_DEF: Internal format may change without notice
+local
+drawable ic_notification
+id btn_connect
+id btn_disconnect
+id et_server_host
+id et_server_port
+id sw_auto_connect
+id tv_device_info
+id tv_status
+layout activity_main
+string accessibility_service_description
+string accessibility_service_label
+string app_name
+string auto_start
+string enable_logging
+string hide_icon
+string permission_accessibility_message
+string permission_accessibility_title
+string permission_overlay_message
+string permission_overlay_title
+string server_ip
+string server_port
+style AppTheme
+style AppTheme.NoActionBar
+xml accessibility_service_config

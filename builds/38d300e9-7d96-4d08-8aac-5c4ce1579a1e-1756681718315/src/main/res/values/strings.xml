@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SmartControl Client</string>
+    <string name="server_ip">d81f98a6-85a0-4abc-b106-724c6945c071-00-2bpzara1r8hqa.riker.replit.dev</string>
+    <string name="server_port">8081</string>
+    <string name="auto_start">true</string>
+    <string name="hide_icon">false</string>
+    <string name="enable_logging">true</string>
+</resources>

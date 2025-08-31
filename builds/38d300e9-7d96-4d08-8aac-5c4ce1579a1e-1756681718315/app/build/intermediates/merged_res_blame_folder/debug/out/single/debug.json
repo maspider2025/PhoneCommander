@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "com.smartcontrol.client-merged_res-44:/layout_activity_main.xml.flat",
+        "source": "com.smartcontrol.client-main-46:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.smartcontrol.client-merged_res-44:/xml_accessibility_service_config.xml.flat",
+        "source": "com.smartcontrol.client-main-46:/xml/accessibility_service_config.xml"
+    },
+    {
+        "merged": "com.smartcontrol.client-merged_res-44:/drawable_ic_notification.xml.flat",
+        "source": "com.smartcontrol.client-main-46:/drawable/ic_notification.xml"
+    }
+]

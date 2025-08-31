@@ -146,7 +146,7 @@ export function APKGenerator() {
   };
 
   const latestConfig = apkConfigs.length > 0 ? apkConfigs[0] : null;
-  const isBuilding = buildProgress?.stage !== 'completed' && buildProgress?.stage !== 'failed';
+  const isBuilding = buildProgress && buildProgress.stage !== 'completed' && buildProgress.stage !== 'failed' && buildProgress.stage !== 'error';
 
   return (
     <Card data-testid="apk-generator">
