@@ -1,109 +1,49 @@
-
-# Projeto Android Remote Access Tool - Configuração Completa
-modules = ["nodejs-20", "java-graalvm22.3", "web", "postgresql-16"]
+modules = ["nodejs-20", "java-graalvm22.3", "web"]
 run = "npm run dev"
-hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist", "builds", ".gradle"]
+hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-25_05"
-packages = [
-  "jdk21",
-  "android-tools", 
-  "gradle",
-  "wget",
-  "unzip",
-  "curl",
-  "zip",
-  "git",
-  "nodejs_20",
-  "typescript",
-  "python3"
-]
+packages = ["jdk21", "android-tools", "gradle"]
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["npm", "run", "start"]
-build = ["npm", "run", "build"]
-ignorePorts = false
+run = ["sh", "-c", "npm run dev"]
 
-# Configuração de portas para desenvolvimento e produção
 [[ports]]
 localPort = 5000
-externalPort = 80
+externalPort = 5000
+
+[[ports]]
+localPort = 7771
+externalPort = 9000
 
 [[ports]]
 localPort = 8080
-externalPort = 8080
+externalPort = 80
 
 [[ports]]
 localPort = 8081
 externalPort = 8081
 
-# Variáveis de ambiente
 [env]
 PORT = "5000"
-NODE_ENV = "development"
-ANDROID_HOME = "/home/runner/${REPL_SLUG}/android-sdk"
-ANDROID_SDK_ROOT = "/home/runner/${REPL_SLUG}/android-sdk"
-JAVA_HOME = "/nix/store/jdk"
-GRADLE_HOME = "/nix/store/gradle"
-PATH = "/home/runner/${REPL_SLUG}/android-sdk/platform-tools:/home/runner/${REPL_SLUG}/android-sdk/build-tools/33.0.0:/nix/store/gradle/bin:$PATH"
 
-# Configuração do Packager para auto-instalação
-[packager]
-language = "nodejs"
-afterInstall = "echo 'Dependências instaladas com sucesso'"
-ignoredPaths = [".git", "node_modules", "dist", "builds", ".gradle", "android-sdk"]
-ignoredPackages = ["android-tools", "gradle"]
-
-[packager.features]
-guessImports = true
-packageSearch = true
-enabledForHosting = true
-
-# Workflows de desenvolvimento
 [workflows]
-runButton = "Full Stack Development"
+runButton = "Project"
 
 [[workflows.workflow]]
-name = "Full Stack Development"
+name = "Project"
 mode = "parallel"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Setup Environment"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Start Backend"
+args = "Start application"
 
 [[workflows.workflow]]
-name = "Setup Environment"
+name = "Start application"
 author = "agent"
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "chmod +x android-template/gradlew"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "mkdir -p android-sdk"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo 'Ambiente Android configurado'"
-
-[[workflows.workflow]]
-name = "Start Backend"
-author = "agent"
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm install"
-waitForPort = 5000
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -111,86 +51,12 @@ args = "npm run dev"
 waitForPort = 5000
 
 [[workflows.workflow]]
-name = "Build APK"
-author = "agent"
+name = "Start Server"
+author = 47044910
 mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd android-template && chmod +x gradlew"
+args = "npm run dev"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd android-template && ./gradlew assembleDebug"
-
-[[workflows.workflow]]
-name = "Clean Build"
-author = "agent"
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd android-template && ./gradlew clean"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "rm -rf builds/*"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run build"
-
-# Configuração de testes unitários
-[unitTest]
-language = "javascript"
-
-# Configuração de importação do GitHub
-[gitHubImport]
-requiredFiles = [".replit", "package.json", "android-template/build.gradle"]
-
-# Configuração do Agent IA
 [agent]
-integrations = [
-  "javascript_database==1.0.0", 
-  "javascript_websocket==1.0.0",
-  "android_development==1.0.0",
-  "gradle_build==1.0.0"
-]
-
-# Configurações específicas do Android
-[android]
-sdkVersion = "33"
-buildToolsVersion = "33.0.0"
-gradleVersion = "8.5"
-javaVersion = "21"
-packageName = "com.smartcontrol.client"
-minSdkVersion = "21"
-targetSdkVersion = "33"
-
-# Configurações de linguagem
-[language]
-primary = "typescript"
-secondary = ["java", "javascript", "xml"]
-
-# Configurações de dependências externas
-[dependencies]
-android_sdk = "33.0.0"
-gradle_wrapper = "8.5"
-node_version = "20"
-java_version = "21"
-typescript_version = "5.6.3"
-
-# Configuração de desenvolvimento
-[development]
-hotReload = true
-autoSave = true
-livePreview = true
-debugMode = true
-
-# Scripts personalizados
-[scripts]
-setup = "npm install && chmod +x android-template/gradlew"
-build_apk = "cd android-template && ./gradlew assembleDebug"
-clean = "cd android-template && ./gradlew clean && rm -rf builds/*"
-dev_server = "npm run dev"
-build_web = "npm run build"
