@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.smartcontrol.client.app-mergeDebugResources-42:/values-v24/values-v24.xml",
+            "outputFile": "com.smartcontrol.client-mergeDebugResources-43:/values-v24/values-v24.xml",
             "map": [
                 {
                     "source": "/home/runner/.gradle/caches/transforms-3/27f944d5dd141e8c451c2518b7151c40/transformed/appcompat-1.6.1/res/values-v24/values-v24.xml",
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "source": "/home/runner/.gradle/caches/transforms-3/a238d6c3e1c92b8aa8bd6333d9bc1038/transformed/material-1.10.0/res/values-v24/values-v24.xml",
+                    "source": "/home/runner/.gradle/caches/transforms-3/323f159c69224d5e1640dba887d53aae/transformed/material-1.11.0/res/values-v24/values-v24.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,9,12,15",
                         "startColumns": "4,4,4,4,4,4,4,4",

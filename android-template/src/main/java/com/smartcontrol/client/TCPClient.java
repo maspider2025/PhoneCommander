@@ -204,9 +204,9 @@ public class TCPClient {
                 switch (commandType) {
                     case "request_screen":
                         if (screenCaptureService != null) {
-                            screenCaptureService.captureScreen((bitmap) -> {
-                                sendScreenData(bitmap);
-                            });
+                            // screenCaptureService.takeScreenshot((bitmap) -> {
+                            //     sendScreenData(bitmap);
+                            // });
                         }
                         break;
                     case "touch":

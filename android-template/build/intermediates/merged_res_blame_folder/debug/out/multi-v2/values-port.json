@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.smartcontrol.client.app-mergeDebugResources-42:/values-port/values-port.xml",
+            "outputFile": "com.smartcontrol.client-mergeDebugResources-43:/values-port/values-port.xml",
             "map": [
                 {
                     "source": "/home/runner/.gradle/caches/transforms-3/27f944d5dd141e8c451c2518b7151c40/transformed/appcompat-1.6.1/res/values-port/values-port.xml",

@@ -80,11 +80,11 @@ public class RemoteControlService extends Service implements
     }
 
     // WebSocket Client Listener Methods
-    public void onConnected() {
+    public void onWebSocketConnected() {
         Log.d(TAG, "WebSocket connection established");
     }
 
-    public void onDisconnected() {
+    public void onWebSocketDisconnected() {
         Log.d(TAG, "WebSocket connection lost");
     }
 
@@ -93,7 +93,7 @@ public class RemoteControlService extends Service implements
         handleCommand(message);
     }
 
-    public void onError(String error) {
+    public void onWebSocketError(String error) {
         Log.e(TAG, "WebSocket error: " + error);
     }
 

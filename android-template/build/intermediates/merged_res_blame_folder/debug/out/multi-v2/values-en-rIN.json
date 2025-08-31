@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.smartcontrol.client.app-mergeDebugResources-42:/values-en-rIN/values-en-rIN.xml",
+            "outputFile": "com.smartcontrol.client-mergeDebugResources-43:/values-en-rIN/values-en-rIN.xml",
             "map": [
                 {
                     "source": "/home/runner/.gradle/caches/transforms-3/b4829edc5f358dca3db74e025a4e510e/transformed/core-1.12.0/res/values-en-rIN/values-en-rIN.xml",

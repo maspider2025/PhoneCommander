@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.smartcontrol.client.app-mergeDebugResources-42:/values-en-rXC/values-en-rXC.xml",
+            "outputFile": "com.smartcontrol.client-mergeDebugResources-43:/values-en-rXC/values-en-rXC.xml",
             "map": [
                 {
                     "source": "/home/runner/.gradle/caches/transforms-3/0129c0219a712c6a8a2066a07189af8a/transformed/preference-1.2.1/res/values-en-rXC/values-en-rXC.xml",
