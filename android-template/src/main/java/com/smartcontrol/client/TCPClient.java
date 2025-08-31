@@ -1,25 +1,30 @@
 package com.smartcontrol.client;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
-import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityManager;
-// Removed duplicate AccessibilityService import
-import android.view.accessibility.GestureDescription;
-import android.graphics.Path;
+import android.view.Display;
+import android.view.WindowManager;
+import android.graphics.Point;
+import android.graphics.Bitmap;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -292,12 +297,12 @@ public class TCPClient {
         }
     }
 
-    private void sendScreenData(android.graphics.Bitmap bitmap) {
+    private void sendScreenData(Bitmap bitmap) {
         if (bitmap == null) return;
         
         try {
-            java.io.ByteArrayOutputStream stream = new java.io.ByteArrayOutputStream();
-            bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 80, stream);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
             byte[] byteArray = stream.toByteArray();
             String base64Image = Base64.encodeToString(byteArray, Base64.NO_WRAP);
             
@@ -351,27 +356,36 @@ public class TCPClient {
     }
 
     private int getBatteryLevel() {
-        android.content.IntentFilter ifilter = new android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED);
-        android.content.Intent batteryStatus = context.registerReceiver(null, ifilter);
-        int level = batteryStatus.getIntExtra(android.os.BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryStatus.getIntExtra(android.os.BatteryManager.EXTRA_SCALE, -1);
-        return Math.round((level / (float) scale) * 100);
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.registerReceiver(null, ifilter);
+        if (batteryStatus != null) {
+            int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+            int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+            return Math.round((level / (float) scale) * 100);
+        }
+        return 0;
     }
 
     private int getScreenWidth() {
-        android.view.WindowManager wm = (android.view.WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        android.view.Display display = wm.getDefaultDisplay();
-        android.graphics.Point size = new android.graphics.Point();
-        display.getSize(size);
-        return size.x;
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        if (wm != null) {
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            return size.x;
+        }
+        return 1080;
     }
 
     private int getScreenHeight() {
-        android.view.WindowManager wm = (android.view.WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        android.view.Display display = wm.getDefaultDisplay();
-        android.graphics.Point size = new android.graphics.Point();
-        display.getSize(size);
-        return size.y;
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        if (wm != null) {
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            return size.y;
+        }
+        return 1920;
     }
 
     public boolean isConnected() {
