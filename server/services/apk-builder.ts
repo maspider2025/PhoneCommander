@@ -133,10 +133,21 @@ org.gradle.configureondemand=false
 android.enableR8.fullMode=false`;
     await fs.writeFile(gradlePropsPath, gradleProps);
 
-    // Update app/build.gradle
-    const appBuildGradlePath = join(projectDir, "app/build.gradle");
-    const appBuildGradle = `plugins {
-    id 'com.android.application'
+    // Update build.gradle (our project uses single module structure, not app/)
+    const appBuildGradlePath = join(projectDir, "build.gradle");
+    const appBuildGradle = `buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.4'
+    }
+}
+
+plugins {
+    id 'com.android.application' version '8.1.4'
 }
 
 android {
@@ -179,29 +190,6 @@ android {
     }
 }
 
-dependencies {
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.core:core:1.12.0'
-    implementation 'com.google.android.material:material:1.10.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.preference:preference:1.2.1'
-    implementation 'androidx.work:work-runtime:2.8.1'
-}`;
-    await fs.writeFile(appBuildGradlePath, appBuildGradle);
-
-    // Update root build.gradle
-    const rootBuildGradlePath = join(projectDir, "build.gradle");
-    const rootBuildGradle = `buildscript {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.4'
-    }
-}
-
 allprojects {
     repositories {
         google()
@@ -209,36 +197,100 @@ allprojects {
     }
 }
 
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.core:core:1.12.0'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.preference:preference:1.2.1'
+    implementation 'androidx.work:work-runtime:2.8.1'
+    
+    // Network and JSON
+    implementation 'org.json:json:20230227'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+    
+    // Media and Graphics
+    implementation 'androidx.lifecycle:lifecycle-service:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-process:2.7.0'
+    
+    // Accessibility and Services
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
+    
+    // Testing
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }`;
-    await fs.writeFile(rootBuildGradlePath, rootBuildGradle);
+    await fs.writeFile(appBuildGradlePath, appBuildGradle);
+
+    // Create settings.gradle for proper project structure
+    const settingsGradlePath = join(projectDir, "settings.gradle");
+    const settingsGradle = `rootProject.name = "SmartControl Client"
+include ':'`;
+    await fs.writeFile(settingsGradlePath, settingsGradle);
 
     // Update AndroidManifest.xml
     const manifestPath = join(projectDir, "src/main/AndroidManifest.xml");
     const manifest = `<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="${config.packageName}">
 
+    <!-- Network permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    
+    <!-- System permissions -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
+    <!-- Storage permissions -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    
+    <!-- Screen capture permissions -->
+    <uses-permission android:name="android.permission.CAPTURE_VIDEO_OUTPUT" 
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.CAPTURE_SECURE_VIDEO_OUTPUT" 
+        tools:ignore="ProtectedPermissions" />
+    
+    <!-- Media projection for screen capture -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    
+    <!-- Additional system permissions -->
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+    
+    <!-- Device admin permissions -->
+    <uses-permission android:name="android.permission.BIND_DEVICE_ADMIN" />
+    <uses-permission android:name="android.permission.DEVICE_POWER" 
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="${config.appName}"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:requestLegacyExternalStorage="true"
+        android:usesCleartextTraffic="true">
         
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -246,7 +298,7 @@ task clean(type: Delete) {
         </activity>
 
         <service
-            android:name=".AccessibilityService"
+            android:name=".AccessibilityControlService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:exported="false">
             <intent-filter>
@@ -259,7 +311,13 @@ task clean(type: Delete) {
 
         <service
             android:name=".ScreenCaptureService"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
+
+        <service
+            android:name=".RemoteControlService"
+            android:exported="false"
+            android:enabled="true" />
 
         <receiver
             android:name=".BootReceiver"
